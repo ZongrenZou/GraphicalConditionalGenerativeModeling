@@ -9,3 +9,5 @@ This repository contains source code for the paper: Graphical Conditional Genera
 - Flax 0.10.6
 - Optax 0.2.5
 - Diffrax 0.7.0
+- Gymnasium 1.2.3
+- Stable-Baselines3 2.7.1
