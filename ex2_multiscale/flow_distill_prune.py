@@ -41,7 +41,7 @@ def sample(
 
     z0 = np.random.normal(size=[x.shape[0], 1])
     z0 = jnp.array(z0)
-    x_fixed = x 
+    x_fixed = x
     zT = jax.vmap(solve_single, in_axes=(0, 0))(z0, x_fixed)
     return zT, z0
 
@@ -53,7 +53,7 @@ def discover(index, X, Y, Z, params, m):
     names = []
     for i in range(m):
         names += ["$x_{" + str(i + 1) + "}$"]
-    target_name = "$\Delta x_{" + str(index+1) + "}$"
+    target_name = "$\Delta x_{" + str(index + 1) + "}$"
 
     pruned_names = []
     ratios = []
@@ -117,9 +117,8 @@ if __name__ == "__main__":
     x_sd = np.std(x_data, axis=0)
     X_train = (x_data - x_mu) / x_sd
 
-
     for i in range(9, x_data.shape[1]):
-        y_data = data["dXs"][:, i:i+1]
+        y_data = data["dXs"][:, i : i + 1]
         y_mu = np.mean(y_data, axis=0)
         y_sd = np.std(y_data, axis=0)
         Y_train = (y_data - y_mu) / y_sd

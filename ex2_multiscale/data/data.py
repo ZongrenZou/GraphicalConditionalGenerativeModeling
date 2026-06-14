@@ -142,6 +142,7 @@ def simulate(
 
     return ts, Xs, Ys
 
+
 # m is the number of slow variables
 # we take m=10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200
 m = 10

@@ -7,8 +7,6 @@ import numpy as np
 from ckpt_io import save_model
 import models
 
-
-
 if __name__ == "__main__":
     data = sio.loadmat("./data/lunar_lander_impulse_data.mat")
     actions = data["actions"]

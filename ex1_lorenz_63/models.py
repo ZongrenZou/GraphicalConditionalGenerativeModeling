@@ -47,7 +47,7 @@ class TrainCfg:
     batch_size: int = 256
     epochs: int = 50_000
     log_every: int = 500
-    
+
 
 def make_cfm_batch(key, Xb, Yb):
     key_t, key_z0 = jr.split(key)

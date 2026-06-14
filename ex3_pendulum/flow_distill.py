@@ -15,12 +15,12 @@ def sample(
     params,
     x,
     model,
-):  
+):
     # define velocity function
     def velocity(params, model, t, z, x):
         out = model.apply({"params": params}, t, z, x)
         return out.reshape(-1)
-        
+
     # Build once
     term = dfx.ODETerm(lambda t, y, args: velocity(params, model, t, y, args))
 
@@ -45,7 +45,6 @@ def sample(
     x_fixed = x
     zT = jax.vmap(solve_single, in_axes=(0, 0))(z0, x_fixed)
     return zT, z0
-
 
 
 if __name__ == "__main__":

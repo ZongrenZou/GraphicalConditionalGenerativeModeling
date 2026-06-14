@@ -7,7 +7,6 @@ import numpy as np
 from ckpt_io import save_model
 import models
 
-
 if __name__ == "__main__":
     data = sio.loadmat("./data/data.mat")
     x_data = data["X"]
@@ -22,13 +21,12 @@ if __name__ == "__main__":
     x_sd = np.std(x_data, axis=0)
     X_train = (x_data - x_mu) / x_sd
 
-
     for index in [1, 10]:
         seed = 81763263  # for reproducibility
         np.random.seed(seed)
-        y_mu = np.mean(y_data[:, index-1: index], axis=0)
-        y_sd = np.std(y_data[:, index-1: index], axis=0)
-        Y_train = (y_data[:, index-1: index] - y_mu) / y_sd
+        y_mu = np.mean(y_data[:, index - 1 : index], axis=0)
+        y_sd = np.std(y_data[:, index - 1 : index], axis=0)
+        Y_train = (y_data[:, index - 1 : index] - y_mu) / y_sd
 
         key = np.random.randint(0, 1_000_000_000)
         key = jr.PRNGKey(key)
@@ -61,6 +59,5 @@ if __name__ == "__main__":
                 "y_sd": y_sd,
             },
         )
-
 
     print("End main.")

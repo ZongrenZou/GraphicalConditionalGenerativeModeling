@@ -36,7 +36,6 @@ class VelocityMLP(nn.Module):
         return out if out.shape[0] > 1 else out[0]  # return (d,) if single
 
 
-
 @dataclass
 class ModelCfg:
     hidden_dims: Tuple[int, ...] = (64, 64)

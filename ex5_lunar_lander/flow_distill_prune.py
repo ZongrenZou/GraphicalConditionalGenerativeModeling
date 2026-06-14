@@ -21,7 +21,7 @@ def sample(
     def velocity(params, model, t, z, x):
         out = model.apply({"params": params}, t, z, x)
         return out.reshape(-1)
-        
+
     # Build once
     term = dfx.ODETerm(lambda t, y, args: velocity(params, model, t, y, args))
 
@@ -213,6 +213,7 @@ if __name__ == "__main__":
 
     ############ Pruning ############
     import utils
+
     params = {
         "lx": 10 * [2.0],
         "lz": 1.0,
@@ -230,9 +231,6 @@ if __name__ == "__main__":
     Y = (y_train - np.mean(y_train, axis=0)) / np.std(y_train, axis=0)
     Z = z_train
 
-
     discover("v_a", params, X, Y, Z)
-
-
 
     print("End main.")

@@ -53,7 +53,7 @@ def discover(index, X, Y, Z, params, m):
     names = []
     for i in range(m):
         names += ["$x_{" + str(i + 1) + "}$"]
-    target_name = "$\Delta x_{" + str(index+1) + "}$"
+    target_name = "$\Delta x_{" + str(index + 1) + "}$"
 
     pruned_names = []
     ratios = []
@@ -170,6 +170,5 @@ if __name__ == "__main__":
         Z = z_train
 
         discover(0, X, Y, Z, params, m)
-
 
     print("End main.")

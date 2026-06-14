@@ -7,7 +7,6 @@ import numpy as np
 from ckpt_io import save_model
 import models
 
-
 if __name__ == "__main__":
     M = 95_000
 

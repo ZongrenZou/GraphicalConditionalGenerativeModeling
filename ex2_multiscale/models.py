@@ -9,7 +9,6 @@ import optax
 from flax.training import train_state
 
 
-
 class VelocityMLP(nn.Module):
     """v_theta(t, z, x): concat [z, t, x] -> MLP -> R^d."""
 

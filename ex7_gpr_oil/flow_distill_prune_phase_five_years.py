@@ -41,7 +41,7 @@ def sample(
 
     z0 = np.random.normal(size=[x.shape[0], 1])
     z0 = jnp.array(z0)
-    x_fixed = x 
+    x_fixed = x
     zT = jax.vmap(solve_single, in_axes=(0, 0))(z0, x_fixed)
     return zT, z0
 
@@ -144,7 +144,7 @@ def discover(index, params, X, Y, Z, X_val, Y_val, Z_val):
     plt.tight_layout()
     fig.savefig("./figs/ratios_phase_five_years.png", dpi=200)
     plt.close()
-    
+
 
 if __name__ == "__main__":
     data = sio.loadmat("./data/data_oil_gpr.mat")["data"]
@@ -219,7 +219,6 @@ if __name__ == "__main__":
         axis=-1,
     )
 
-
     ## normalize the data
     x_mu = np.mean(x_data, axis=0)
     x_sd = np.std(x_data, axis=0)
@@ -272,7 +271,6 @@ if __name__ == "__main__":
     not_pruned_x = x_samples[:, 0:5]
     x_samples = np.concatenate([x_samples[:, 5:], not_pruned_x], axis=1)
 
-
     idx = np.random.choice(x_samples.shape[0], x_samples.shape[0], replace=False)
     x_train = x_samples[idx[:M], :]
     z_train = z_samples[idx[:M], :]
@@ -289,6 +287,5 @@ if __name__ == "__main__":
     Z_val = z_val
 
     discover(1, params, X, Y, Z, X_val, Y_val, Z_val)
-
 
     print("End main.")

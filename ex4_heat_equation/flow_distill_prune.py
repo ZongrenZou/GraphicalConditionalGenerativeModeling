@@ -16,10 +16,11 @@ def sample(
     params,
     x,
     model,
-):  
+):
     # build velocity function
     def velocity(params, model, t, z, x):
         return model.apply({"params": params}, t, z, x)
+
     # Build once
     term = dfx.ODETerm(lambda t, y, args: velocity(params, model, t, y, args))
 
@@ -115,15 +116,14 @@ if __name__ == "__main__":
     x_sd = np.std(x_data, axis=0)
     X_train = (x_data - x_mu) / x_sd
 
-
     seed = 81763263  # for reproducibility
     np.random.seed(seed)
 
     # prune only x1 and x10
     for index in [1, 10]:
-        y_mu = np.mean(y_data[:, index-1: index], axis=0)
-        y_sd = np.std(y_data[:, index-1: index], axis=0)
-        Y_train = (y_data[:, index-1: index] - y_mu) / y_sd
+        y_mu = np.mean(y_data[:, index - 1 : index], axis=0)
+        y_sd = np.std(y_data[:, index - 1 : index], axis=0)
+        Y_train = (y_data[:, index - 1 : index] - y_mu) / y_sd
 
         key = np.random.randint(0, 1_000_000_000)
         key = jr.PRNGKey(key)
@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
         ############ Sampling ############
         M = x_data.shape[0]
-        N = 100 # repeat data N times
+        N = 100  # repeat data N times
         x = np.tile(x_data, [N, 1]).reshape([N * M, x_data.shape[1]])
         z_samples, z0_samples = sample(
             params,
@@ -175,6 +175,5 @@ if __name__ == "__main__":
         Z = (z_train - np.mean(z_train, axis=0)) / np.std(z_train, axis=0)
 
         discover(index, params, X, Y, Z)
-
 
     print("End main.")

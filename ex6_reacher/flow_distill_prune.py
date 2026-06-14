@@ -17,7 +17,6 @@ from flax.training import train_state
 import models
 import utils
 
-
 jax.config.update("jax_enable_x64", True)
 
 
@@ -345,11 +344,10 @@ def main():
     parser.add_argument("--steps", type=int, default=1_000)
     parser.add_argument("--batch-size", type=int, default=1_000)
     parser.add_argument("--lr", type=float, default=1e-4)
-    # seed only controls the training of the flow, not the pruning 
-    parser.add_argument("--seed", type=int, default=81763263) 
+    # seed only controls the training of the flow, not the pruning
+    parser.add_argument("--seed", type=int, default=81763263)
     parser.add_argument("--prune-samples", type=int, default=2_000)
     args = parser.parse_args()
-   
 
     output_root = args.output_root
     (output_root / "outputs").mkdir(parents=True, exist_ok=True)

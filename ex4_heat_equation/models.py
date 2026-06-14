@@ -9,7 +9,6 @@ from flax import linen as nn
 import numpy as np
 
 
-
 class VelocityMLP(nn.Module):
     """v_theta(t, z, x): concat [z, t, x] -> MLP -> R^d."""
 
@@ -116,4 +115,3 @@ def train_cfm_flax(
         print(it, loss / (i + 1), flush=True)
 
     return state.params, model
-

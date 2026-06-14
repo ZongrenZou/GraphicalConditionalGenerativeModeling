@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 
 import utils
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--index", type=int, default=0)
 parser.add_argument("--N", type=int, default=10)
@@ -175,7 +174,7 @@ def discover(index):
     ax.set_xlabel("Pruned group")
     plt.tight_layout()
     fig.savefig("./figs/ratios_{}.png".format(str(index)), dpi=200)
-    
+
 
 discover(1)
 
