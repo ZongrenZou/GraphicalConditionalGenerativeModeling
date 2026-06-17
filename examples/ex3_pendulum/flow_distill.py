@@ -1,50 +1,9 @@
-import numpy as np
-import jax
-import jax.numpy as jnp
 import jax.random as jr
-import scipy.io as sio
 import numpy as np
-import diffrax as dfx
+import scipy.io as sio
 
-
+import gcm.core as models
 from gcm.core.ckpt_io import save_model
-import gcm.core.models as models
-
-
-def sample(
-    params,
-    x,
-    model,
-):
-    # define velocity function
-    def velocity(params, model, t, z, x):
-        out = model.apply({"params": params}, t, z, x)
-        return out.reshape(-1)
-
-    # Build once
-    term = dfx.ODETerm(lambda t, y, args: velocity(params, model, t, y, args))
-
-    @jax.jit
-    def solve_single(z0i, x):
-        sol = dfx.diffeqsolve(
-            term,
-            dfx.Tsit5(),
-            t0=0.0,
-            t1=1.0,
-            dt0=None,
-            y0=z0i,
-            args=x,  # pass conditioning vector for this traj
-            saveat=dfx.SaveAt(t1=True),
-            stepsize_controller=dfx.PIDController(rtol=1e-5, atol=1e-5),
-            max_steps=1_000_000,
-        )
-        return sol.ys
-
-    z0 = np.random.normal(size=[x.shape[0], 1])
-    z0 = jnp.array(z0)
-    x_fixed = x
-    zT = jax.vmap(solve_single, in_axes=(0, 0))(z0, x_fixed)
-    return zT, z0
 
 
 if __name__ == "__main__":
@@ -144,7 +103,7 @@ if __name__ == "__main__":
     N = 10
     x = np.tile(x_data, [N, 1]).reshape([N * M, x_data.shape[1]])
 
-    z_samples, z0_samples = sample(
+    z_samples, z0_samples = models.sample(
         params,
         x=(x - x_mu) / x_sd,
         model=model,

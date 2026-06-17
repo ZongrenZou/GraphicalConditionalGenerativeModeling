@@ -21,14 +21,27 @@ python flow_distill_prune.py
 
 Run scripts from within each example directory so relative paths to `data/`, `checkpoints/`, and `figs/` resolve correctly.
 
+To run every primary example (ex1–ex7):
+
+```bash
+python scripts/run_all_examples.py
+```
+
+These are full reproduction runs and may take hours or days.
+
 ## Installation
 
 ```bash
-pip install -r requirements.txt
 pip install -e .
 ```
 
-For the Reacher example (ex6) with GPU support, install the pinned CUDA PyTorch wheel documented in [`requirements.txt`](requirements.txt).
+All runtime dependencies are declared in `pyproject.toml`.
+
+For the Reacher example (ex6) with GPU support, install the pinned CUDA PyTorch wheel after the editable install:
+
+```bash
+pip install torch==2.8.0.dev20250506+cu128 --index-url https://download.pytorch.org/whl/nightly/cu128
+```
 
 ## Package layout
 

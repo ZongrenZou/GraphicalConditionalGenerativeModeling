@@ -1,10 +1,9 @@
-import numpy as np
 import jax.random as jr
+import numpy as np
 import scipy.io as sio
 
-
+import gcm.core as models
 from gcm.core.ckpt_io import save_model
-import gcm.core.models as models
 
 if __name__ == "__main__":
     data = sio.loadmat("./data/data.mat")
@@ -24,6 +23,8 @@ if __name__ == "__main__":
             _x_data = np.concatenate([x_data[:, 0:2], u_data[:, 0:1]], axis=-1)
         elif index == 10:
             _x_data = np.concatenate([x_data[:, 8:10], u_data[:, 1:2]], axis=-1)
+        else:
+            raise ValueError(f"unsupported index: {index}")
         _y_data = y_data[:, index - 1 : index]
 
         x_mu = np.mean(_x_data, axis=0)

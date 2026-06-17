@@ -24,8 +24,12 @@ if _REPO_ROOT not in sys.path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--num-rollouts", type=int, default=1, help="Number of episodes to collect")
-    parser.add_argument("--horizon", type=int, default=150, help="Maximum steps per rollout")
+    parser.add_argument(
+        "--num-rollouts", type=int, default=1, help="Number of episodes to collect"
+    )
+    parser.add_argument(
+        "--horizon", type=int, default=150, help="Maximum steps per rollout"
+    )
     parser.add_argument("--seed", type=int, default=0, help="Base RNG seed")
     parser.add_argument(
         "--out",
@@ -35,10 +39,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    import dmbrl.env  # noqa: F401
     import gymnasium as gym
     import numpy as np
-
-    import dmbrl.env  # noqa: F401
 
     timestamp = time.strftime("%Y-%m-%d--%H:%M:%S", time.localtime())
     out_path = args.out or os.path.join("data", "reacher_init_%s.npz" % timestamp)
@@ -120,7 +123,8 @@ def main() -> int:
         next_obs=np.asarray(flat_next_obs, dtype=np.float64),
         rewards=np.asarray(flat_rewards, dtype=np.float64),
         goals=np.asarray(flat_goals, dtype=np.float64),
-        deltas=np.asarray(flat_next_obs, dtype=np.float64) - np.asarray(flat_obs, dtype=np.float64),
+        deltas=np.asarray(flat_next_obs, dtype=np.float64)
+        - np.asarray(flat_obs, dtype=np.float64),
         traj_obs=np.asarray(traj_obs, dtype=object),
         traj_actions=np.asarray(traj_actions, dtype=object),
         traj_next_obs=np.asarray(traj_next_obs, dtype=object),

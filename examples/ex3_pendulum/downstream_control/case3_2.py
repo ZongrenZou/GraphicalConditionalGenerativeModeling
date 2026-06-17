@@ -37,7 +37,7 @@ import jax.numpy as jnp
 import jax.random as jr
 import diffrax as dfx
 from gcm.core.ckpt_io import load_model
-import gcm.core.models as fm_models
+import gcm.core as fm_models
 
 TRUE_WARMUP_STEPS = 10
 

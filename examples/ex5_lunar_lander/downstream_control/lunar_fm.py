@@ -47,7 +47,7 @@ import jax.numpy as jnp
 import jax.random as jr
 import diffrax as dfx
 from gcm.core.ckpt_io import load_model
-import gcm.core.models as fm_models
+import gcm.core as fm_models
 
 from gymnasium.envs.box2d.lunar_lander import (
     LunarLander,

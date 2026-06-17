@@ -11,10 +11,11 @@ import jax.numpy as jnp
 import jax.random as jr
 import numpy as np
 import optax
+from tqdm import trange
 
 
 from gcm.core.ckpt_io import load_model
-import gcm.core.models as models
+import gcm.core as models
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 
@@ -184,7 +185,8 @@ def main():
     print(f"Latent dim         : {latent_dim}")
     print(f"Batch size         : {train_cfg.batch_size}")
 
-    for step in range(1, train_cfg.steps + 1):
+    pbar = trange(1, train_cfg.steps + 1, desc="distill")
+    for step in pbar:
         key, x_key, z_key = jr.split(key, 3)
         x_batch_norm = jr.normal(x_key, shape=(train_cfg.batch_size, x_dim))
         x_batch = x_mu + x_sd * x_batch_norm
@@ -192,9 +194,7 @@ def main():
         y_teacher_norm = teacher_batch(x_batch_norm, z_batch)
 
         state, loss = train_step(state, x_batch, z_batch, y_teacher_norm)
-
-        if step % train_cfg.log_every == 0 or step == 1 or step == train_cfg.steps:
-            print(f"step={step:6d} loss={float(loss):.6e}", flush=True)
+        pbar.set_postfix(loss=f"{float(loss):.6e}")
 
     teacher_stats = {
         "x_mu": np.asarray(x_mu),

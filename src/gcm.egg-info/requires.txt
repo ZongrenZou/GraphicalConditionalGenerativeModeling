@@ -5,7 +5,7 @@ jax==0.6.2
 flax==0.10.6
 optax==0.2.5
 diffrax==0.7.0
-gymnasium==1.2.3
+gymnasium[box2d]==1.2.3
 stable-baselines3==2.7.1
 jaxopt>=0.8
 tqdm>=4.66

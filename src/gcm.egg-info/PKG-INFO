@@ -13,7 +13,7 @@ Requires-Dist: jax==0.6.2
 Requires-Dist: flax==0.10.6
 Requires-Dist: optax==0.2.5
 Requires-Dist: diffrax==0.7.0
-Requires-Dist: gymnasium==1.2.3
+Requires-Dist: gymnasium[box2d]==1.2.3
 Requires-Dist: stable-baselines3==2.7.1
 Requires-Dist: jaxopt>=0.8
 Requires-Dist: tqdm>=4.66
@@ -46,11 +46,16 @@ Run scripts from within each example directory so relative paths to `data/`, `ch
 ## Installation
 
 ```bash
-pip install -r requirements.txt
 pip install -e .
 ```
 
-For the Reacher example (ex6) with GPU support, install the pinned CUDA PyTorch wheel documented in [`requirements.txt`](requirements.txt).
+All runtime dependencies are declared in `pyproject.toml`.
+
+For the Reacher example (ex6) with GPU support, install the pinned CUDA PyTorch wheel after the editable install:
+
+```bash
+pip install torch==2.8.0.dev20250506+cu128 --index-url https://download.pytorch.org/whl/nightly/cu128
+```
 
 ## Package layout
 

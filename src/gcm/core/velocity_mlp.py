@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Sequence, Tuple
 
 import jax.numpy as jnp
 from flax import linen as nn
@@ -7,7 +7,7 @@ from flax import linen as nn
 class VelocityMLP(nn.Module):
     """v_theta(t, z, x): concat [z, t, x] -> MLP -> R^d."""
 
-    hidden_dims: Tuple[int, ...]
+    hidden_dims: Sequence[int]
     dim_out: int
 
     @nn.compact

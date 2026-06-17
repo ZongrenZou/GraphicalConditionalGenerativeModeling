@@ -1,37 +1,16 @@
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Tuple
 
-import jax
 import jax.numpy as jnp
 import jax.random as jr
 import matplotlib.pyplot as plt
 import numpy as np
-import optax
 import scipy.io as sio
-import diffrax as dfx
-from flax.training import train_state
 
-
-import gcm.core.models as models
-import gcm.kernels.per_dim as utils
-from gcm.discovery.cv_loss import loss_function
-
-jax.config.update("jax_enable_x64", True)
-
-
-@dataclass
-class ModelCfg:
-    hidden_dims: Tuple[int, ...] = (128, 128, 128, 128)
-
-
-@dataclass
-class TrainCfg:
-    lr: float = 1e-4
-    batch_size: int = 1_000
-    steps: int = 1_000
-    seed: int = 81763263
+import gcm.core as models
+import gcm.kernels as utils
+from gcm.discovery import loss_function
 
 
 @dataclass
@@ -59,107 +38,6 @@ def load_training_data(data_path: Path) -> tuple[np.ndarray, np.ndarray]:
     return x_data, y_data
 
 
-def make_cfm_batch(key, xb, yb):
-    key_t, key_z0 = jr.split(key)
-    batch_size, dim_out = yb.shape
-    t = jr.uniform(key_t, (batch_size,))
-    z0 = jr.normal(key_z0, (batch_size, dim_out))
-    z_t = (1.0 - t)[:, None] * z0 + t[:, None] * yb
-    u_t = yb - z0
-    return t, z_t, xb, u_t
-
-
-def loss_fn(params, model, key, xb, yb):
-    t, z_t, xb, u_t = make_cfm_batch(key, xb, yb)
-    v_pred = model.apply({"params": params}, t, z_t, xb)
-    return jnp.mean(jnp.sum((v_pred - u_t) ** 2, axis=-1))
-
-
-def create_train_state(rng, model, dim_out: int, dim_in: int, cfg: TrainCfg):
-    t0 = jnp.array(0.0)
-    z0 = jnp.zeros((1, dim_out))
-    x0 = jnp.zeros((1, dim_in))
-    params = model.init(rng, t0, z0, x0)["params"]
-    tx = optax.adam(cfg.lr)
-    return train_state.TrainState(
-        step=0,
-        apply_fn=model.apply,
-        params=params,
-        tx=tx,
-        opt_state=tx.init(params),
-    )
-
-
-def train_model(x_train, y_train, model_cfg: ModelCfg, train_cfg: TrainCfg):
-    num_rows, dim_in = x_train.shape
-    dim_out = y_train.shape[1]
-
-    rng = np.random.default_rng(train_cfg.seed)
-    key = jr.PRNGKey(int(rng.integers(0, 1_000_000_000)))
-
-    model = models.VelocityMLP(hidden_dims=model_cfg.hidden_dims, dim_out=dim_out)
-    key, init_key = jr.split(key)
-    state = create_train_state(
-        init_key, model, dim_out=dim_out, dim_in=dim_in, cfg=train_cfg
-    )
-
-    @jax.jit
-    def step(state, key, xb, yb):
-        loss, grads = jax.value_and_grad(loss_fn)(state.params, model, key, xb, yb)
-        return state.apply_gradients(grads=grads), loss
-
-    batches_per_epoch = max(1, int(np.ceil(num_rows / train_cfg.batch_size)))
-
-    for it in range(1, train_cfg.steps + 1):
-        perm = rng.permutation(num_rows)
-        epoch_loss = 0.0
-
-        for batch_idx in range(batches_per_epoch):
-            start = batch_idx * train_cfg.batch_size
-            stop = min((batch_idx + 1) * train_cfg.batch_size, num_rows)
-            batch_ids = perm[start:stop]
-            xb = jnp.asarray(x_train[batch_ids])
-            yb = jnp.asarray(y_train[batch_ids])
-            key, step_key = jr.split(key)
-            state, batch_loss = step(state, step_key, xb, yb)
-            epoch_loss += float(batch_loss)
-
-        print(f"train step {it}: loss={epoch_loss / batches_per_epoch:.6f}", flush=True)
-
-    return state.params, model
-
-
-def velocity(params, model, t, z, x):
-    out = model.apply({"params": params}, t, z, x)
-    return out.reshape(-1)
-
-
-def sample_outputs(params, model, x_norm: np.ndarray, seed: int):
-    x_norm = jnp.asarray(x_norm)
-    dim_out = model.dim_out
-    z0 = jr.normal(jr.PRNGKey(seed), (x_norm.shape[0], dim_out))
-    term = dfx.ODETerm(lambda t, y, args: velocity(params, model, t, y, args))
-
-    @jax.jit
-    def solve_single(z0i, xi):
-        sol = dfx.diffeqsolve(
-            term,
-            dfx.Tsit5(),
-            t0=0.0,
-            t1=1.0,
-            dt0=None,
-            y0=z0i,
-            args=xi,
-            saveat=dfx.SaveAt(t1=True),
-            stepsize_controller=dfx.PIDController(rtol=1e-5, atol=1e-5),
-            max_steps=1_000_000,
-        )
-        return sol.ys[0]
-
-    zt = jax.vmap(solve_single, in_axes=(0, 0))(z0, x_norm)
-    return np.asarray(zt), np.asarray(z0)
-
-
 def discover_ancestors(
     x_data: np.ndarray,
     z_data: np.ndarray,
@@ -174,7 +52,6 @@ def discover_ancestors(
             "Need at least four sampled rows to build train/validation pruning splits."
         )
 
-    # rng = np.random.default_rng(10_000 + output_index)
     idx = np.random.permutation(x_data.shape[0])
 
     x_train = x_data[idx[:sample_count]]
@@ -345,7 +222,6 @@ def main():
     parser.add_argument("--steps", type=int, default=1_000)
     parser.add_argument("--batch-size", type=int, default=1_000)
     parser.add_argument("--lr", type=float, default=1e-4)
-    # seed only controls the training of the flow, not the pruning
     parser.add_argument("--seed", type=int, default=81763263)
     parser.add_argument("--prune-samples", type=int, default=2_000)
     args = parser.parse_args()
@@ -362,29 +238,32 @@ def main():
     x_train = (x_data - x_mu) / x_sd
     y_train = (y_data - y_mu) / y_sd
 
-    params, model = train_model(
-        x_train=x_train,
-        y_train=y_train,
-        model_cfg=ModelCfg(),
-        train_cfg=TrainCfg(
+    key = jr.PRNGKey(args.seed)
+    params, model = models.train_cfm_flax(
+        key,
+        x_train,
+        y_train,
+        model_cfg=models.ModelCfg(hidden_dims=(128, 128, 128, 128)),
+        train_cfg=models.TrainCfg(
             lr=args.lr,
             batch_size=args.batch_size,
             steps=args.steps,
-            seed=args.seed,
         ),
     )
 
-    N = 20
-    x_data = np.tile(x_data, [N, 1])
-    x_train = np.tile(x_train, [N, 1])
+    n_repeats = 20
+    x_data = np.tile(x_data, [n_repeats, 1])
+    x_norm = np.tile(x_train, [n_repeats, 1])
 
-    z_samples_norm, z0_samples = sample_outputs(
-        params=params,
-        model=model,
-        x_norm=x_train,
+    z_samples_norm, z0_samples = models.sample(
+        params,
+        x_norm,
+        model,
         seed=args.seed + 1,
+        squeeze_time=True,
     )
-    y_samples = z_samples_norm * y_sd + y_mu
+    y_samples = np.asarray(z_samples_norm) * y_sd + y_mu
+    z0_samples = np.asarray(z0_samples)
 
     prune_cfg = PruneCfg(sample_pairs=args.prune_samples)
     prune_summaries = []

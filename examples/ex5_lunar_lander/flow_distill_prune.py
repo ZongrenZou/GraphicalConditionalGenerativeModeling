@@ -1,143 +1,25 @@
-import numpy as np
-import jax
 import jax.numpy as jnp
 import jax.random as jr
-import scipy.io as sio
 import numpy as np
-import diffrax as dfx
-import matplotlib.pyplot as plt
+import scipy.io as sio
 
-
+import gcm.core as models
 from gcm.core.ckpt_io import save_model
-import gcm.core.models as models
-import gcm.kernels.per_dim as utils
+from gcm.discovery import discover_product
 
 
-def sample(
-    params,
-    x,
-    model,
-):
-    # define velocity function
-    def velocity(params, model, t, z, x):
-        out = model.apply({"params": params}, t, z, x)
-        return out.reshape(-1)
-
-    # Build once
-    term = dfx.ODETerm(lambda t, y, args: velocity(params, model, t, y, args))
-
-    @jax.jit
-    def solve_single(z0i, x):
-        sol = dfx.diffeqsolve(
-            term,
-            dfx.Tsit5(),
-            t0=0.0,
-            t1=1.0,
-            dt0=None,
-            y0=z0i,
-            args=x,
-            saveat=dfx.SaveAt(t1=True),
-            stepsize_controller=dfx.PIDController(rtol=1e-5, atol=1e-5),
-            max_steps=1_000_000,
-        )
-        return sol.ys
-
-    z0 = np.random.normal(size=[x.shape[0], 1])
-    z0 = jnp.array(z0)
-    x_fixed = x
-    zT = jax.vmap(solve_single, in_axes=(0, 0))(z0, x_fixed)
-    return zT, z0
-
-
-def discover(name, params, X, Y, Z):
-
-    ## define active modes
-    active_modes = N * [1.0]
-    names = [
-        "x",
-        "y",
-        "vx",
-        "vy",
-        "angle",
-        "va",
-        "leg 1",
-        "leg 2",
-        "a_1",
-        "a_2",
-    ]
-    target_name = "$\Delta " + name + "$"
-
-    pruned_names = []
-    ratios = []
-
-    for i in range(N + 1):
-
-        ## then we perform the regression and compute activations
-        lx = params["lx"]
-        lz = params["lz"]
-        gamma = jnp.exp(params["log_gamma"])
-        # print("The log_gamma is: ", params["log_gamma"])
-
-        K = utils.kernel_fn(
-            X,
-            Z,
-            X,
-            Z,
-            lx,
-            lz,
-            active_modes,
-        )
-        L = jnp.linalg.cholesky(K + gamma * jnp.eye(K.shape[0]))
-        yb = jnp.linalg.solve(L.T, jnp.linalg.solve(L, Y))
-
-        signal2 = yb.T @ K @ yb
-        noise2 = yb.T @ (gamma * np.eye(K.shape[0])) @ yb
-
-        activations = N * [1e12]
-        for j in range(N):
-            if active_modes[j] == 1:
-                _active_modes = active_modes.copy()
-                _active_modes[j] = 0
-            else:
-                continue
-            _K = 1 * K - utils.kernel_fn(
-                X,
-                Z,
-                X,
-                Z,
-                lx,
-                lz,
-                _active_modes,
-            )
-            rkhs_norm2 = yb.T @ _K @ yb
-            print(
-                "The {}th variable's activation: ".format(str(j)),
-                rkhs_norm2.reshape([]),
-            )
-            activations[j] = rkhs_norm2.reshape([])
-
-        if i < N:
-            ## finally, we prune the variable with the lowest energy
-            idx = np.argmin(activations)
-            print("The {}th mode has the lowest energy.".format(str(idx)))
-            active_modes[idx] = 0
-            pruned_names += [names[idx]]
-
-        ratios += [noise2 / (noise2 + signal2)]
-
-    ratios = [v.reshape([]) for v in ratios]
-
-    fig, ax = plt.subplots(1, 2, figsize=[12, 5])
-    plt.suptitle("Finding ancestors of " + target_name)
-    ax[0].plot(ratios, "k-o")
-    ax[0].set_title("The noise-to-signal ratio")
-    ax[1].plot(pruned_names, np.array(ratios[1:]) - np.array(ratios[:-1]), "k-o")
-    ax[1].set_title("The increment of the noise-to-signal ratio")
-    ax[1].set_xlabel("Pruned variables")
-    plt.tight_layout()
-    fig.savefig("./figs/ratios_{}.png".format(name), dpi=200)
-
-    # np.savetxt("./outputs/ratios_{}.txt".format(str(index)), np.array(ratios))
+LUNAR_VAR_NAMES = [
+    "x",
+    "y",
+    "vx",
+    "vy",
+    "angle",
+    "va",
+    "leg 1",
+    "leg 2",
+    "a_1",
+    "a_2",
+]
 
 
 if __name__ == "__main__":
@@ -202,8 +84,7 @@ if __name__ == "__main__":
     )
 
     ############ Sampling ############
-    M = x_data.shape[0]
-    z_samples, z0_samples = sample(
+    z_samples, z0_samples = models.sample(
         params,
         x=(x_data - x_mu) / x_sd,
         model=model,
@@ -213,25 +94,34 @@ if __name__ == "__main__":
     z_samples = z0_samples
 
     ############ Pruning ############
-    import utils
-
-    params = {
+    prune_params = {
         "lx": 10 * [2.0],
         "lz": 1.0,
         "log_gamma": jnp.log(1.0),
     }
-    N = 10
-    M = 5000
+    n_vars = 10
+    n_train = 5000
 
     idx = np.random.choice(x_data.shape[0], x_data.shape[0], replace=False)
-    x_train = x_samples[idx[:M]]
-    z_train = z_samples[idx[:M]]
-    y_train = y_samples[idx[:M]]
+    x_train = x_samples[idx[:n_train]]
+    z_train = z_samples[idx[:n_train]]
+    y_train = y_samples[idx[:n_train]]
 
     X = (x_train - np.mean(x_train, axis=0)) / np.std(x_train, axis=0)
     Y = (y_train - np.mean(y_train, axis=0)) / np.std(y_train, axis=0)
     Z = z_train
 
-    discover("v_a", params, X, Y, Z)
+    discover_product(
+        0,
+        X,
+        Y,
+        Z,
+        prune_params,
+        n_vars,
+        target_name=r"$\Delta v_a$",
+        names=LUNAR_VAR_NAMES,
+        fig_path="./figs/ratios_v_a.png",
+        tight_layout=True,
+    )
 
     print("End main.")

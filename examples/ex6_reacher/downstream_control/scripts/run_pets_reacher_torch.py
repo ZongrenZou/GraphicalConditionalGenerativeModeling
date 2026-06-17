@@ -19,7 +19,9 @@ if _REPO_ROOT not in sys.path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--logdir", type=str, default="log", help="Parent log directory")
+    parser.add_argument(
+        "--logdir", type=str, default="log", help="Parent log directory"
+    )
     parser.add_argument("--ntrain-iters", type=int, default=100)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--device", type=str, default="cpu", help="cpu or cuda")
@@ -37,11 +39,10 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    import dmbrl.env as env
     import gymnasium as gym
     import numpy as np
     import torch
-
-    import dmbrl.env as env
     from dmbrl.torch_pets.ensemble import ProbabilisticEnsemble
     from dmbrl.torch_pets.experiment import run_mb_experiment
     from dmbrl.torch_pets.mpc import TorchMPC

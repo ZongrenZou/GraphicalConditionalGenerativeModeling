@@ -4,10 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from flax import linen as nn
 from flax import serialization
+import gcm  # noqa: F401 — enables float64 via gcm package init
 import jax
-
-jax.config.update("jax_enable_x64", True)
-
 import jax.numpy as jnp
 import jax.random as jr
 import jaxopt

@@ -1,0 +1,8 @@
+{
+  "include": ["src", "examples"],
+  "exclude": ["**/__pycache__", "**/.git"],
+  "pythonVersion": "3.10",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportInvalidStringEscapeSequence": "warning"
+}

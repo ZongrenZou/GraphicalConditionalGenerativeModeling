@@ -1,11 +1,9 @@
-import numpy as np
 import jax.random as jr
-import scipy.io as sio
 import numpy as np
+import scipy.io as sio
 
-
+import gcm.core as models
 from gcm.core.ckpt_io import save_model
-import gcm.core.models as models
 
 if __name__ == "__main__":
     data = sio.loadmat("./data/lunar_lander_impulse_data.mat")
