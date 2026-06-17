@@ -1,3 +1,25 @@
+Metadata-Version: 2.4
+Name: gcm
+Version: 0.1.0
+Summary: Graphical Conditional Generative Modeling for Digital Twin Modeling
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy==2.2.6
+Requires-Dist: scipy==1.15.3
+Requires-Dist: matplotlib==3.10.3
+Requires-Dist: jax==0.6.2
+Requires-Dist: flax==0.10.6
+Requires-Dist: optax==0.2.5
+Requires-Dist: diffrax==0.7.0
+Requires-Dist: gymnasium==1.2.3
+Requires-Dist: stable-baselines3==2.7.1
+Requires-Dist: jaxopt>=0.8
+Requires-Dist: tqdm>=4.66
+Requires-Dist: torch>=2.0
+Dynamic: license-file
+
 <!-- PAPER_LINK: update this URL when the paper is published -->
 [PAPER_LINK]: https://arxiv.org/abs/TBD
 
