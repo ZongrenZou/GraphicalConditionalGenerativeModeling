@@ -70,7 +70,9 @@ def train_cfm_flax(key, X_train, Y_train, model_cfg, train_cfg):
 
     @jax.jit
     def step(state, key, Xb, Yb):
-        batch_loss, grads = jax.value_and_grad(loss_fn)(state.params, model, key, Xb, Yb)
+        batch_loss, grads = jax.value_and_grad(loss_fn)(
+            state.params, model, key, Xb, Yb
+        )
         state = state.apply_gradients(grads=grads)
         return state, batch_loss
 

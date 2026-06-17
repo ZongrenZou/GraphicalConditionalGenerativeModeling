@@ -33,7 +33,9 @@ def save_model(
         raise ValueError("Could not determine model dim_out for checkpoint metadata")
 
     arch = {
-        "hidden_dims": list(cfg_dict.get("hidden_dims", getattr(model, "hidden_dims", []))),
+        "hidden_dims": list(
+            cfg_dict.get("hidden_dims", getattr(model, "hidden_dims", []))
+        ),
         "dim_out": int(dim_out),
     }
     (ckpt_dir / "model_cfg.json").write_text(json.dumps(arch))
