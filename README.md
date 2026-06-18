@@ -1,5 +1,5 @@
 # GraphicalConditionalGenerativeModeling
-This repository contains source code for the paper: Graphical Conditional Generative Modeling for Digital Twin Modeling. It requires the following dependencies to be installed:
+This repository contains source code for the paper: [Graphical Conditional Generative Modeling for Digital Twin Modeling](https://arxiv.org/abs/2606.16219). It requires the following dependencies to be installed:
 
 - Python 3.10.0
 - SciPy 1.15.3
@@ -12,3 +12,13 @@ This repository contains source code for the paper: Graphical Conditional Genera
 - PyTorch `2.8.0.dev20250506+cu128`
 - Gymnasium 1.2.3
 - Stable-Baselines3 2.7.1
+
+## Cite us
+```
+@article{zou2026graphical,
+  title={Graphical conditional generative modeling for digital twin modeling},
+  author={Zou, Zongren and Bourdais, Th{\'e}o and Baptista, Ricardo and Owhadi, Houman},
+  journal={arXiv preprint arXiv:2606.16219},
+  year={2026}
+}
+```
