@@ -112,7 +112,10 @@ def sample(
 ):
     def velocity(params, model, t, z, x):
         out = model.apply({"params": params}, t, z, x)
-        return out.reshape(-1) if reshape_output else out
+        if reshape_output:
+            return out.reshape(-1)
+        # Inside vmap, z is 1-D but the MLP adds a batch axis to its output.
+        return out.reshape(z.shape)
 
     term = dfx.ODETerm(lambda t, y, args: velocity(params, model, t, y, args))
 
