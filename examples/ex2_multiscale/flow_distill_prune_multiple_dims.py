@@ -7,10 +7,12 @@ import gcm.core as models
 import gcm.kernels as utils
 from gcm.discovery import discover_vectorized
 
+from data.data import ensure_data
+
 
 if __name__ == "__main__":
     for m in [20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200]:
-        data = sio.loadmat(f"./data/data_{m}.mat")
+        data = sio.loadmat(ensure_data(m))
         x_data = data["Xs"]
         y_data = data["dXs"][:, 0:1]
 

@@ -7,9 +7,12 @@ import gcm.core as models
 import gcm.kernels as utils
 from gcm.discovery import discover_vectorized
 
+from data.data import ensure_data
+
 
 if __name__ == "__main__":
-    data = sio.loadmat("./data/data_10.mat")
+    m = 10
+    data = sio.loadmat(ensure_data(m))
     x_data = data["Xs"]
     x_mu = np.mean(x_data, axis=0)
     x_sd = np.std(x_data, axis=0)
@@ -56,7 +59,6 @@ if __name__ == "__main__":
             "lz": 1.0,
             "log_gamma": jnp.log(1.0),
         }
-        m = 10
         M = 2000
 
         idx = np.random.choice(x_data.shape[0], x_data.shape[0], replace=False)
