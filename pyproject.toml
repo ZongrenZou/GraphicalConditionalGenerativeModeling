@@ -1,0 +1,45 @@
+[project]
+name = "gcm"
+version = "0.1.0"
+description = "Graphical Conditional Generative Modeling for Digital Twin Modeling"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "numpy==2.2.6",
+    "scipy==1.15.3",
+    "matplotlib==3.10.3",
+    "jax==0.6.2",
+    "flax==0.10.6",
+    "optax==0.2.5",
+    "diffrax==0.7.0",
+    "gymnasium[box2d]==1.2.3",
+    "stable-baselines3==2.7.1",
+    "jaxopt>=0.8",
+    "tqdm>=4.66",
+    "torch>=2.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = [
+    "gcm",
+    "gcm.core",
+    "dmbrl",
+    "dmbrl.env",
+    "dmbrl.torch_pets",
+]
+
+[tool.setuptools.package-dir]
+"" = "src"
+"dmbrl" = "src/gcm/pets/dmbrl"
+
+[tool.pyright]
+pythonVersion = "3.10"
+include = ["src", "examples"]
+typeCheckingMode = "basic"
+reportMissingImports = "warning"
+reportInvalidStringEscapeSequence = "warning"

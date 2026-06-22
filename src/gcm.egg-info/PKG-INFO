@@ -1,5 +1,27 @@
+Metadata-Version: 2.4
+Name: gcm
+Version: 0.1.0
+Summary: Graphical Conditional Generative Modeling for Digital Twin Modeling
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy==2.2.6
+Requires-Dist: scipy==1.15.3
+Requires-Dist: matplotlib==3.10.3
+Requires-Dist: jax==0.6.2
+Requires-Dist: flax==0.10.6
+Requires-Dist: optax==0.2.5
+Requires-Dist: diffrax==0.7.0
+Requires-Dist: gymnasium[box2d]==1.2.3
+Requires-Dist: stable-baselines3==2.7.1
+Requires-Dist: jaxopt>=0.8
+Requires-Dist: tqdm>=4.66
+Requires-Dist: torch>=2.0
+Dynamic: license-file
+
 <!-- PAPER_LINK: update this URL when the paper is published -->
-[PAPER_LINK]: https://arxiv.org/abs/2606.16219
+[PAPER_LINK]: https://arxiv.org/abs/TBD
 
 # Graphical Conditional Generative Modeling
 
@@ -20,14 +42,6 @@ python flow_distill_prune.py
 ```
 
 Run scripts from within each example directory so relative paths to `data/`, `checkpoints/`, and `figs/` resolve correctly.
-
-To run every primary example (ex1–ex7):
-
-```bash
-python scripts/run_all_examples.py
-```
-
-These are full reproduction runs and may take hours or days.
 
 ## Installation
 
@@ -62,13 +76,6 @@ pip install torch==2.8.0.dev20250506+cu128 --index-url https://download.pytorch.
 | [ex6_reacher](examples/ex6_reacher/) | Reacher robot + PETS | `flow_distill_prune.py` |
 | [ex7_gpr_oil](examples/ex7_gpr_oil/) | GPR + WTI oil prices | `flow_distill_prune_all.py` |
 
+## TODO
 
-## Cite us
-```
-@article{zou2026graphical,
-  title={Graphical conditional generative modeling for digital twin modeling},
-  author={Zou, Zongren and Bourdais, Th{\'e}o and Baptista, Ricardo and Owhadi, Houman},
-  journal={arXiv preprint arXiv:2606.16219},
-  year={2026}
-}
-```
+- [ ] Upload paper PDF and update `PAPER_LINK` at the top of this README

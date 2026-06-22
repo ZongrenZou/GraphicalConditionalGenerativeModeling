@@ -1,0 +1,9 @@
+## The stochastic Lorenz-63 example
+
+Requires `pip install -e .` from the repository root.
+
+[flow_distill_prune.py](flow_distill_prune.py): runs the method for the case where the drift and diffusion terms are unknown.
+
+[flow_distill_prune_diffusion.py](flow_distill_prune_diffusion.py): runs the method for the case where the drift is known but the diffusion is not.
+
+[figures.py](figures.py): generates the figures presented in the paper.
