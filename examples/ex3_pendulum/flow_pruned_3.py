@@ -1,9 +1,9 @@
+import gcm.core as models
+from gcm.core.ckpt_io import save_model
+
 import jax.random as jr
 import numpy as np
 import scipy.io as sio
-
-import gcm.core as models
-from gcm.core.ckpt_io import save_model
 
 if __name__ == "__main__":
     M = 95_000

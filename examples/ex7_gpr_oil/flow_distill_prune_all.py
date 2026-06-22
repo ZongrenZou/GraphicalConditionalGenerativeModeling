@@ -1,11 +1,9 @@
 import jax.random as jr
 import numpy as np
 import scipy.io as sio
-
-import gcm.core as models
-
 from common import build_oil_features, prune_oil_gpr
 
+import gcm.core as models
 
 if __name__ == "__main__":
     data = sio.loadmat("./data/data_oil_gpr.mat")["data"]

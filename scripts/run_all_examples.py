@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1] / "examples"
 
-os.environ.setdefault("JAX_PLATFORMS", "cpu")
-os.environ.setdefault("MPLBACKEND", "Agg")
 
 JOBS = [
     ("ex1_lorenz_63", "flow_distill_prune.py"),

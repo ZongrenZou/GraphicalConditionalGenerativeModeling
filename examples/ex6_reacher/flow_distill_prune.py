@@ -2,15 +2,15 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
+import gcm.core as models
+import gcm.kernels as utils
+from gcm.discovery import loss_function
+
 import jax.numpy as jnp
 import jax.random as jr
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io as sio
-
-import gcm.core as models
-import gcm.kernels as utils
-from gcm.discovery import loss_function
 
 
 @dataclass

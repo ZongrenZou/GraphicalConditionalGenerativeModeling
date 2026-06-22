@@ -1,11 +1,11 @@
+import gcm.core as models
+from gcm.core.ckpt_io import save_model
+from gcm.discovery import discover_product
+
 import jax.numpy as jnp
 import jax.random as jr
 import numpy as np
 import scipy.io as sio
-
-import gcm.core as models
-from gcm.core.ckpt_io import save_model
-from gcm.discovery import discover_product
 
 
 LUNAR_VAR_NAMES = [

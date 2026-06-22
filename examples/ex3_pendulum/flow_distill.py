@@ -1,9 +1,11 @@
-import jax.random as jr
-import numpy as np
-import scipy.io as sio
+from pathlib import Path
 
 import gcm.core as models
 from gcm.core.ckpt_io import save_model
+
+import jax.random as jr
+import numpy as np
+import scipy.io as sio
 
 
 if __name__ == "__main__":
@@ -110,8 +112,10 @@ if __name__ == "__main__":
     )
     y_samples = z_samples[:, 0, :] * y_sd + y_mu
 
+    samples_path = Path("./outputs/samples.mat")
+    samples_path.parent.mkdir(parents=True, exist_ok=True)
     sio.savemat(
-        "./outputs/samples.mat",
+        samples_path,
         {
             "y_samples": y_samples,
             "z_samples": z0_samples,

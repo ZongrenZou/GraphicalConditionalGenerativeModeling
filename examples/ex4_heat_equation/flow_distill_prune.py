@@ -1,11 +1,11 @@
+import gcm.core as models
+import gcm.kernels as utils
+from gcm.discovery import discover_vectorized
+
 import jax.numpy as jnp
 import jax.random as jr
 import numpy as np
 import scipy.io as sio
-
-import gcm.core as models
-import gcm.kernels as utils
-from gcm.discovery import discover_vectorized
 
 
 if __name__ == "__main__":
@@ -85,7 +85,7 @@ if __name__ == "__main__":
             Y,
             Z,
             prune_params,
-            n_modes + 1,
+            n_modes,
             prune_step=utils.prune_step,
             target_name=rf"$\Delta x_{{{index}}}$",
             names=mode_names,

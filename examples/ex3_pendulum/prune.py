@@ -1,20 +1,14 @@
 import argparse
-import os
 from pathlib import Path
 
-if os.environ.get("JAX_PLATFORMS", "").lower() != "cpu":
-    # jax-metal does not support float64; GP pruning needs x64 on CPU.
-    os.environ["JAX_PLATFORMS"] = "cpu"
-
+import gcm.core as models
+import gcm.kernels as utils
+from gcm.core.ckpt_io import load_model
 
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io as sio
-
-import gcm.core as models
-import gcm.kernels as utils
-from gcm.core.ckpt_io import load_model
 
 SAMPLES_PATH = Path("./outputs/samples.mat")
 CKPT_DIR = Path("./checkpoints/cfm_all")
