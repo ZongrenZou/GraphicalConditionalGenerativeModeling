@@ -1,5 +1,5 @@
 <!-- PAPER_LINK: update this URL when the paper is published -->
-[PAPER_LINK]: https://arxiv.org/abs/TBD
+[PAPER_LINK]: https://arxiv.org/abs/2606.16219
 
 # Graphical Conditional Generative Modeling
 
@@ -62,6 +62,13 @@ pip install torch==2.8.0.dev20250506+cu128 --index-url https://download.pytorch.
 | [ex6_reacher](examples/ex6_reacher/) | Reacher robot + PETS | `flow_distill_prune.py` |
 | [ex7_gpr_oil](examples/ex7_gpr_oil/) | GPR + WTI oil prices | `flow_distill_prune_all.py` |
 
-## TODO
 
-- [ ] Upload paper PDF and update `PAPER_LINK` at the top of this README
+## Cite us
+```
+@article{zou2026graphical,
+  title={Graphical conditional generative modeling for digital twin modeling},
+  author={Zou, Zongren and Bourdais, Th{\'e}o and Baptista, Ricardo and Owhadi, Houman},
+  journal={arXiv preprint arXiv:2606.16219},
+  year={2026}
+}
+```
